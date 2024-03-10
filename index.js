@@ -24,15 +24,15 @@ const addEmployeeNameInputQuestions = [
     "What is the employee's last name?"
 ];
 
-const addEmployeeNameChoiceQuestions = [
+var addEmployeeNameChoiceQuestions = [
     {
         question: "What is the employee's role?",
         choices: []
+    },
+    {
+        question: "What is the employee's manager?",
+        choices: ["None"]
     }
-    // {
-    //     question: "What is the employee's manager?",
-    //     choices: []
-    // }
 ];
 
 const addRoleInputQuestions = [
@@ -79,8 +79,11 @@ const init = async () => {
                 // console.log(await roles.getRoles());
 
                 addEmployeeNameChoiceQuestions[0].choices = await role.getRoles();
+                // console.log(addEmployeeNameChoiceQuestions);
+                const managerList = await employee.getManagers();
+                console.log(managerList);
+                addEmployeeNameChoiceQuestions[1].choices = addEmployeeNameChoiceQuestions[1].choices.concat(managerList);
                 console.log(addEmployeeNameChoiceQuestions);
-                // addEmployeeNameChoiceQuestions[1].choices = employees.getManagers();
                 menu.setMultipleChoiceQuestions(addEmployeeNameChoiceQuestions);
 
                 // console.log(menu.questions);
@@ -88,10 +91,15 @@ const init = async () => {
                 // show prompt for adding employee
                 answers = await menu.show();
                 console.log(answers);
-                // .then((answers) => {
-                //     console.log(answers);
-                // })
-
+                let roleId = await role.getId("title", answers.choice0);
+                if (answers.choice1 === "None") {
+                    employee.addEmployee(answers.input0, answers.input1, roleId, null);                    
+                } else {
+                    // get manager id
+                    let managerName = answers.choice1.split(" ");
+                    let managerId = await employee.getId(managerName[0], managerName[1]);
+                    employee.addEmployee(answers.input0, answers.input1, roleId, managerId);                    
+                }
                 break;
             case "Update Employee Role":
                 menu.resetQuestions();
@@ -112,9 +120,9 @@ const init = async () => {
                 // show prompt for adding role
                 answers = await menu.show();
                 // console.log(answers);
-                let departmentId = await department.getDepartmentId(answers.choice0);
+                let departmentId = await department.getId("name", answers.choice0);
                 // console.log(departmentId);
-                role.addRole(answers.input0, answers.input1, departmentId[0].id);
+                role.addRole(answers.input0, answers.input1, departmentId);
                 break;
             case "View All Departments":
                 break;
