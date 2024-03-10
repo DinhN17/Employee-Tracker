@@ -111,18 +111,21 @@ const init = async () => {
 
                 // show prompt for adding role
                 answers = await menu.show();
-                console.log(answers);
+                // console.log(answers);
+                let departmentId = await department.getDepartmentId(answers.choice0);
+                // console.log(departmentId);
+                role.addRole(answers.input0, answers.input1, departmentId[0].id);
                 break;
             case "View All Departments":
                 break;
             case "Add Department":
                 menu.resetQuestions();
+                
                 // setup prompt for adding department
                 menu.setInputQuestions(addDepartmentQuestion);
 
                 // show prompt for adding department
                 answers = await menu.show();
-                // console.log(answers);
                 department.addDepartment(answers.input0);
                 break;
             case "View All Employees":
