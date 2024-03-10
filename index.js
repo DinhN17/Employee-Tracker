@@ -51,6 +51,18 @@ const addDepartmentQuestion = [
     "What is the name of the department?"
 ]
 
+
+const updateEmployeeRoleQuestions = [
+    {
+        question: "Which employee would you like to update the role?",
+        choices: []
+    },
+    {
+        question: "What is the new role?",
+        choices: []
+    }
+];
+
 const init = async () => {
     
     var menu = new Prompt();
@@ -102,9 +114,21 @@ const init = async () => {
                 }
                 break;
             case "Update Employee Role":
+                // setup prompt for update employee role
                 menu.resetQuestions();
-                // setup prompt for updating role
-
+                updateEmployeeRoleQuestions[0].choices = await employee.getEmployees();
+                updateEmployeeRoleQuestions[1].choices = await role.getRoles();
+                menu.setMultipleChoiceQuestions(updateEmployeeRoleQuestions);
+                
+                // show prompt
+                answers = await menu.show();
+                
+                // update employee role to db
+                let employeeName = answers.choice0.split(" ");
+                // console.log(employeeName);
+                let employeeId = await employee.getId(employeeName[0], employeeName[1]);
+                let updateRoleId = await role.getId("title", answers.choice1);
+                employee.updateEmployeeRole(employeeId, updateRoleId);
                 break;
             case "View All Roles":
                 
