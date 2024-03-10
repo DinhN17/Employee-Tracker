@@ -1,4 +1,7 @@
 const Prompt = require('./lib/ui/prompt');
+const Employee = require('./lib/models/employee');
+const Role = require('./lib/models/role');
+const Department = require('./lib/models/department');
 
 const mainMenu = [
     {
@@ -16,15 +19,33 @@ const mainMenu = [
     }
 ];
 
-const addEmployeeNameQuestions = [
+const addEmployeeNameInputQuestions = [
     "What is the employee's first name?",
     "What is the employee's last name?"
-]
+];
 
-const addRoleQuestions = [
+const addEmployeeNameChoiceQuestions = [
+    {
+        question: "What is the employee's role?",
+        choices: []
+    }
+    // {
+    //     question: "What is the employee's manager?",
+    //     choices: []
+    // }
+];
+
+const addRoleInputQuestions = [
     "What is the name of the role?",
     "What is the salary of the role?"
 ];
+
+const addRoleChoiceQuestions = [
+    {
+        question: "What is the department of the role?",
+        choices: []
+    }
+]
 
 const addDepartmentQuestion = [
     "What is the name of the department?"
@@ -33,6 +54,10 @@ const addDepartmentQuestion = [
 const init = async () => {
     
     var menu = new Prompt();
+    var roles = new Role();
+    var departments = new Department();
+    var employees = new Employee();
+
     var isFinished = false;
 
     
@@ -43,62 +68,68 @@ const init = async () => {
         // setup prompt for main menu
         menu.setMultipleChoiceQuestions(mainMenu);
 
-        await menu.show()
-        .then( async (answers) => {
-            console.log(answers);
-            switch (answers.choice0) {
-                case "Add Employee":
-                    menu.resetQuestions();
-                    // setup prompt for adding employee
-                    menu.setInputQuestions(addEmployeeNameQuestions);
-                    console.log(menu.questions);
+        var answers = await menu.show();
+        
+        // console.log(answers);
+        switch (answers.choice0) {
+            case "Add Employee":
+                menu.resetQuestions();
+                // setup prompt for adding employee
+                menu.setInputQuestions(addEmployeeNameInputQuestions);
+                // console.log(await roles.getRoles());
 
-                    // show prompt for adding employee
-                    await menu.show()
-                    .then((answers) => {
-                        console.log(answers);
-                    })
+                addEmployeeNameChoiceQuestions[0].choices = await roles.getRoles();
+                console.log(addEmployeeNameChoiceQuestions);
+                // addEmployeeNameChoiceQuestions[1].choices = employees.getManagers();
+                menu.setMultipleChoiceQuestions(addEmployeeNameChoiceQuestions);
 
-                    break;
-                case "Update Employee Role":
-                    menu.resetQuestions();
-                    // setup prompt for updating role
+                // console.log(menu.questions);
 
-                    break;
-                case "View All Roles":
-                    
-                    break;
-                case "Add Role":
-                    menu.resetQuestions();
-                    // setup prompt for adding role
-                    menu.setInputQuestions(addRoleQuestions);
+                // show prompt for adding employee
+                answers = await menu.show();
+                console.log(answers);
+                // .then((answers) => {
+                //     console.log(answers);
+                // })
 
-                    // show prompt for adding role
-                    await menu.show()
-                    .then((answers) => {
-                        console.log(answers);
-                    })
-                    break;
-                case "View All Departments":
-                    break;
-                case "Add Department":
-                    menu.resetQuestions();
-                    // setup prompt for adding department
-                    menu.setInputQuestions(addDepartmentQuestion);
+                break;
+            case "Update Employee Role":
+                menu.resetQuestions();
+                // setup prompt for updating role
 
-                    // show prompt for adding department
-                    await menu.show()
-                    .then((answers) => {
-                        console.log(answers);
-                    })
-                    break;
-                case "View All Employees":
-                    break;
-                default:
-                    isFinished = true;
-                    break;
-            }
-        });
+                break;
+            case "View All Roles":
+                
+                break;
+            case "Add Role":
+                menu.resetQuestions();
+                // setup prompt for adding role
+                menu.setInputQuestions(addRoleInputQuestions);
+
+                addRoleChoiceQuestions[0].choices = await departments.getDepartments();
+                menu.setMultipleChoiceQuestions(addRoleChoiceQuestions);
+
+                // show prompt for adding role
+                answers = await menu.show();
+                console.log(answers);
+                break;
+            case "View All Departments":
+                break;
+            case "Add Department":
+                menu.resetQuestions();
+                // setup prompt for adding department
+                menu.setInputQuestions(addDepartmentQuestion);
+
+                // show prompt for adding department
+                answers = await menu.show();
+                // console.log(answers);
+                break;
+            case "View All Employees":
+                break;
+            default:
+                isFinished = true;
+                break;
+        };
     };
 
 };
