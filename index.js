@@ -54,9 +54,9 @@ const addDepartmentQuestion = [
 const init = async () => {
     
     var menu = new Prompt();
-    var roles = new Role();
-    var departments = new Department();
-    var employees = new Employee();
+    var role = new Role();
+    var department = new Department();
+    var employee = new Employee();
 
     var isFinished = false;
 
@@ -78,7 +78,7 @@ const init = async () => {
                 menu.setInputQuestions(addEmployeeNameInputQuestions);
                 // console.log(await roles.getRoles());
 
-                addEmployeeNameChoiceQuestions[0].choices = await roles.getRoles();
+                addEmployeeNameChoiceQuestions[0].choices = await role.getRoles();
                 console.log(addEmployeeNameChoiceQuestions);
                 // addEmployeeNameChoiceQuestions[1].choices = employees.getManagers();
                 menu.setMultipleChoiceQuestions(addEmployeeNameChoiceQuestions);
@@ -106,7 +106,7 @@ const init = async () => {
                 // setup prompt for adding role
                 menu.setInputQuestions(addRoleInputQuestions);
 
-                addRoleChoiceQuestions[0].choices = await departments.getDepartments();
+                addRoleChoiceQuestions[0].choices = await department.getDepartments();
                 menu.setMultipleChoiceQuestions(addRoleChoiceQuestions);
 
                 // show prompt for adding role
@@ -123,6 +123,7 @@ const init = async () => {
                 // show prompt for adding department
                 answers = await menu.show();
                 // console.log(answers);
+                department.addDepartment(answers.input0);
                 break;
             case "View All Employees":
                 break;
