@@ -3,6 +3,8 @@ const Employee = require('./lib/models/employee');
 const Role = require('./lib/models/role');
 const Department = require('./lib/models/department');
 
+const asTable = require ('as-table').configure ({ delimiter: '  ' });
+
 const mainMenu = [
     {
         question: "What would you like to do?",
@@ -131,7 +133,7 @@ const init = async () => {
                 employee.updateEmployeeRole(employeeId, updateRoleId);
                 break;
             case "View All Roles":
-                
+                console.log(asTable(await role.viewAll()));
                 break;
             case "Add Role":
                 menu.resetQuestions();
@@ -149,6 +151,7 @@ const init = async () => {
                 role.addRole(answers.input0, answers.input1, departmentId);
                 break;
             case "View All Departments":
+                console.log(asTable(await department.viewAll()));
                 break;
             case "Add Department":
                 menu.resetQuestions();
@@ -161,6 +164,7 @@ const init = async () => {
                 department.addDepartment(answers.input0);
                 break;
             case "View All Employees":
+                console.log(asTable(await employee.viewAll()));
                 break;
             default:
                 isFinished = true;
