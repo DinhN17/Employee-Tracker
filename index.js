@@ -247,6 +247,29 @@ async function handleViewAllEmployees() {
     const employee = new Employee();
     console.log(asTable(await employee.viewAll()));
 }
+
+async function handleViewEmployeesByManager() {
+    const employee = new Employee();
+    const menu = new Prompt();
+
+    // setup prompt for view all employees by manager
+    const viewAllEmployeesByManagerQuestions = [
+        {
+            question: "Which manager's employees?",
+            choices: []
+        }
+    ]
+    viewAllEmployeesByManagerQuestions[0].choices = await employee.getManagers();
+    menu.setMultipleChoiceQuestions(viewAllEmployeesByManagerQuestions);
+
+    // show prompt
+    let answers = await menu.show();
+
+    // show all employees by manager
+    let managerName = answers.choice0.split(" ");
+    let managerId = await employee.getId(managerName[0], managerName[1]);
+    console.log(asTable(await employee.viewByColumn("manager_id", managerId)));
+};
 async function handleViewAllRoles() {
     const role = new Role();
     console.log(asTable(await role.viewAll()));
@@ -328,6 +351,9 @@ const init = async () => {
                 break;
             case "View All Employees":
                 await handleViewAllEmployees();
+                break;
+            case "View Employees By Manager":
+                await handleViewEmployeesByManager();
                 break;
             case "View Utilized Budget of a department":
                 await handleViewUtilizedBudget();
