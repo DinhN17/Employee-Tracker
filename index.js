@@ -183,6 +183,28 @@ async function handleDeleteRole() {
     // delete role
     role.delete(answers.choice0);
 }
+
+async function handleDeleteEmployee() {
+    const employee = new Employee();
+    const menu = new Prompt();
+
+    // setup prompt for delete role
+    const deleteEmployeeQuestions = [
+        {
+            question: "Which employee would you like to delete?",
+            choices: []
+        }
+    ]
+    deleteEmployeeQuestions[0].choices = await employee.getEmployees();
+    menu.setMultipleChoiceQuestions(deleteEmployeeQuestions);
+    
+    // show prompt
+    let answers = await menu.show();
+
+    // delete employee
+    let employeeName = answers.choice0.split(" ");
+    employee.delete(employeeName[0], employeeName[1]);
+}
 async function handleViewAllEmployees() {
     const employee = new Employee();
     console.log(asTable(await employee.viewAll()));
@@ -243,6 +265,8 @@ const init = async () => {
             case "Update Employee Role":
                 await handleUpdateEmployeeRole();
                 break;
+            case "Delete Employee":
+                await handleDeleteEmployee();
             case "View All Roles":
                 await handleViewAllRoles();
                 break;
