@@ -9,13 +9,19 @@ const mainMenu = [
     {
         question: "What would you like to do?",
         choices: [
+            "View All Employees",
             "Add Employee",
             "Update Employee Role",
+            "Update Employee Manager",
+            "View Employees By Manager",
+            "Delete Employee",
             "View All Roles",
             "Add Role",
+            "Delete Role",
             "View All Departments",
             "Add Department",
-            "View All Employees",
+            "Delete Department",
+            "View Utilized Budget of a department",
             "Quit"
         ]
     }
@@ -148,6 +154,29 @@ async function handleViewAllDepartments() {
     console.log(asTable(await department.viewAll()));
 }
 
+async function handleViewUtilizedBudget() {
+    const department = new Department();
+    // const employee = new Employee();
+    // const role = new Role();
+    const menu = new Prompt();
+
+    // setup prompt for view utilized budget
+    const utilizedBudgetQuestions = [
+        {
+            question: "Which department's utilized budget?",
+            choices: []
+        }
+    ]
+
+    utilizedBudgetQuestions[0].choices = await department.getDepartments();
+    menu.setMultipleChoiceQuestions(utilizedBudgetQuestions);
+
+    // show prompt
+    let answers = await menu.show();
+
+    // show utilized budget
+    console.log(asTable(await department.getTotalUtilizedBudget(answers.choice0)));
+}
 const init = async () => {
     
     const menu = new Prompt();
@@ -188,6 +217,9 @@ const init = async () => {
                 break;
             case "View All Employees":
                 await handleViewAllEmployees();
+                break;
+            case "View Utilized Budget of a department":
+                await handleViewUtilizedBudget();
                 break;
             default:
                 isFinished = true;
