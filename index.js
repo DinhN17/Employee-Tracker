@@ -14,6 +14,7 @@ const mainMenu = [
             "Update Employee Role",
             "Update Employee Manager",
             "View Employees By Manager",
+            "View Employees By Department",
             "Delete Employee",
             "View All Roles",
             "Add Role",
@@ -258,7 +259,7 @@ async function handleViewEmployeesByManager() {
             question: "Which manager's employees?",
             choices: []
         }
-    ]
+    ];
     viewAllEmployeesByManagerQuestions[0].choices = await employee.getManagers();
     menu.setMultipleChoiceQuestions(viewAllEmployeesByManagerQuestions);
 
@@ -268,8 +269,30 @@ async function handleViewEmployeesByManager() {
     // show all employees by manager
     let managerName = answers.choice0.split(" ");
     let managerId = await employee.getId(managerName[0], managerName[1]);
-    console.log(asTable(await employee.viewByColumn("manager_id", managerId)));
+    console.log(asTable(await employee.viewByColumn("emp.manager_id", managerId)));
 };
+async function handleViewEmployeesByDepartment() {
+    const employee = new Employee();
+    const department = new Department();
+    const menu = new Prompt();
+
+    // setup prompt for view all employees by department
+    const viewEmployeesByDepartmentQuestions = [
+        {
+            question: "Which department's employees?",
+            choices: []
+        }
+    ];
+    viewEmployeesByDepartmentQuestions[0].choices = await department.getDepartments();
+    menu.setMultipleChoiceQuestions(viewEmployeesByDepartmentQuestions);
+
+    // show prompt
+    let answers = await menu.show();
+
+    // show all employees by department
+    let departmentId = await department.getId("name", answers.choice0);
+    console.log(asTable(await employee.viewByColumn("department.id", departmentId)));
+}
 async function handleViewAllRoles() {
     const role = new Role();
     console.log(asTable(await role.viewAll()));
@@ -328,6 +351,9 @@ const init = async () => {
                 break;
             case "Update Employee Manager":
                 await handleUpdateEmployeeManager();
+                break;
+            case "View Employees By Department":
+                await handleViewEmployeesByDepartment();
                 break;
             case "Delete Employee":
                 await handleDeleteEmployee();
