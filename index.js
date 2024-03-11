@@ -52,11 +52,49 @@ async function handleUpdateEmployeeRole() {
     
     // update employee role to db
     let employeeName = answers.choice0.split(" ");
-    // console.log(employeeName);
     let employeeId = await employee.getId(employeeName[0], employeeName[1]);
     let updateRoleId = await role.getId("title", answers.choice1);
-    employee.updateEmployeeRole(employeeId, updateRoleId);
+    
+    // employee.updateEmployeeRole(employeeId, updateRoleId);
+    employee.updateById(employeeId, "role_id", updateRoleId);
 }
+
+async function handleUpdateEmployeeManager() {
+    const menu = new Prompt();
+    const employee = new Employee();
+
+    // setup prompt for update employee manager
+    const updateEmployeeManagerQuestions = [
+        {
+            question: "Which employee would you like to update the manager?",
+            choices: []
+        },
+        {
+            question: "Who is the new manager?",
+            choices: []
+        }
+    ];
+    updateEmployeeManagerQuestions[0].choices = await employee.getEmployees();
+    updateEmployeeManagerQuestions[1].choices = await employee.getManagers();
+    updateEmployeeManagerQuestions[1].choices.push("None"); // for no manager
+    menu.setMultipleChoiceQuestions(updateEmployeeManagerQuestions);
+
+    // show prompt
+    let answers = await menu.show();
+
+    // update employee manager to db
+    let employeeName = answers.choice0.split(" ");
+    let employeeId = await employee.getId(employeeName[0], employeeName[1]);
+    var managerId = null;
+    if (answers.choice1 === "None") {
+        employee.updateById(employeeId, "manager_id", null);
+    } else {
+        // get manager id
+        let managerName = answers.choice1.split(" ");
+        managerId = await employee.getId(managerName[0], managerName[1]);
+        employee.updateById(employeeId, "manager_id", managerId);
+    };  
+};
 async function handleAddEmployee() {
     const menu = new Prompt();
     const employee = new Employee();
@@ -264,6 +302,9 @@ const init = async () => {
                 break;
             case "Update Employee Role":
                 await handleUpdateEmployeeRole();
+                break;
+            case "Update Employee Manager":
+                await handleUpdateEmployeeManager();
                 break;
             case "Delete Employee":
                 await handleDeleteEmployee();
