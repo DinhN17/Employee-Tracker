@@ -141,6 +141,27 @@ async function handleAddDepartment() {
     answers = await menu.show();
     department.addDepartment(answers.input0);
 }
+
+async function handleDeleteDepartment() {
+    const department = new Department();
+    const menu = new Prompt();
+
+    // setup prompt for delete department
+    const deleteDepartmentQuestions = [
+        {
+            question: "Which department would you like to delete?",
+            choices: []
+        }
+    ]
+    deleteDepartmentQuestions[0].choices = await department.getDepartments();
+    menu.setMultipleChoiceQuestions(deleteDepartmentQuestions);
+
+    // show prompt
+    let answers = await menu.show();
+
+    // delete department
+    department.delete(answers.choice0);
+}
 async function handleViewAllEmployees() {
     const employee = new Employee();
     console.log(asTable(await employee.viewAll()));
@@ -156,8 +177,6 @@ async function handleViewAllDepartments() {
 
 async function handleViewUtilizedBudget() {
     const department = new Department();
-    // const employee = new Employee();
-    // const role = new Role();
     const menu = new Prompt();
 
     // setup prompt for view utilized budget
@@ -214,6 +233,9 @@ const init = async () => {
                 break;
             case "Add Department":
                 await handleAddDepartment();
+                break;
+            case "Delete Department":
+                await handleDeleteDepartment();
                 break;
             case "View All Employees":
                 await handleViewAllEmployees();
