@@ -2,7 +2,7 @@
 
 ## Description
 
-Note taker is a command-line application to manage a company's employee database, using Node.js, Inquirer, and MySQL.
+Employee tracker is a command-line application to manage a company's employee database, using Node.js, Inquirer, and MySQL.
 
 ## Installation
 
